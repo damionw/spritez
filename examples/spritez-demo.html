@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en-US">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Spritez Basic Demo</title>
+        <script type="application/javascript" language="javascript" src="spritez.js"></script>
+    </head>
+
+    <body>
+        <canvas id="mycanvas" width=640 height=480>
+        </canvas>
+    </body>
+
+    <script>
+        var canvas = document.getElementById("mycanvas").canvas;
+        var animator = new Spritez.Animator(canvas);
+        var box = new Spritez.Box(20, 20, 50, 50);
+        box.delta_x = box.delta_y = 2;
+
+        var circle = new Spritez.Circle(10, 120, 30);
+        circle.delta_x = 1;
+        circle.delta_y = -1;
+
+        animator.add(box, circle);
+        animator.start(100);
+    </script>
+
+</html>

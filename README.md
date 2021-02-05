@@ -1,1 +1,1 @@
-# spritez
+# A canvas sprite tinkering library
