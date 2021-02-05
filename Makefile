@@ -1,6 +1,13 @@
+# See: https://spicyyoghurt.com/tutorials/html5-javascript-game-development/create-a-proper-game-loop-with-requestanimationframe
+# See: https://www.createjs.com/easeljs
+
 .PHONY: clean demo_support
 
-ORDERED_COMPONENTS_LIST := src/sprites.js
+ORDERED_COMPONENTS_LIST := \
+	src/animator.js \
+	src/sprite.js \
+	src/box.js \
+	src/circle.js
 
 all: build/static/spritez.js
 

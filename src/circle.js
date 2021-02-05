@@ -38,4 +38,4 @@ class Circle extends Sprite {
     }
 }
 
-window.Spritez[Circle.constructor.name] = Circle;
+(window.Spritez = window.Spritez || {})[Circle.name] = Circle;

@@ -28,4 +28,4 @@ class Box extends Sprite {
     }
 }
 
-window.Spritez[Box.constructor.name] = Box;
+(window.Spritez = window.Spritez || {})[Box.name] = Box;

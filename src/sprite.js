@@ -120,3 +120,5 @@ class Sprite {
         this.ctx.fillRect(100, 50, 200, 175);
     }
 }
+
+// (window.Spritez = window.Spritez || {})[Sprite.name] = Sprite;

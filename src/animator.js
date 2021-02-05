@@ -1,5 +1,3 @@
-window.Spritez = window.Spritez || {};
-
 class Animator {
     //=========================================================
     //                      Constructor
@@ -175,4 +173,4 @@ class Animator {
     }
 }
 
-window.Spritez[Animator.constructor.name] = Animator;
+(window.Spritez = window.Spritez || {})[Animator.name] = Animator;
