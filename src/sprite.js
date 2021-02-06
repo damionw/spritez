@@ -15,11 +15,21 @@ class Sprite {
         this._y = y || 0;
         this._delta_x = 0;
         this._delta_y = 0;
+        this._collision_damping = 0;
+        this._sortorder = 50;
     }
 
     //=========================================================
     //                   Object attributes
     //=========================================================
+    get sortorder() {
+        return this._sortorder;
+    }
+
+    set sortorder(sortorder) {
+        this._sortorder = sortorder;
+    }
+
     get collision_blocks() {
         return [];
     }
@@ -68,6 +78,10 @@ class Sprite {
     //                      Animation
     //=========================================================
     update() {
+        if (this._collision_damping) {
+            --this._collision_damping;
+        }
+
         this._x += this._delta_x;
         this._y += this._delta_y;
         this.draw();
@@ -103,13 +117,56 @@ class Sprite {
         return results;
     }
 
+    reportCollision(other) {
+        var name1 = this.constructor.name + "(" + this.id + ")";
+        var name2;
+
+        if (typeof(other) == "string") {
+            name2 = other;
+        }
+        else if (other == null) {
+            name2 = "something";
+        }
+        else {
+            name2 = other.constructor.name + "(" + other.id + ")";
+        }
+
+        console.log(
+            "COLLISION: " + name1 + " with " + name2 + " at " + this.x + "," + this.y
+        );
+    }
+
+    collisionLeft() {
+        this.reportCollision("left");
+        this.delta_x = -this.delta_x;
+    }
+
+    collisionRight() {
+        this.reportCollision("right");
+        this.delta_x = -this.delta_x;
+    }
+
+    collisionTop() {
+        this.reportCollision("top");
+        this.delta_y = -this.delta_y;
+    }
+
+    collisionBottom() {
+        this.reportCollision("bottom");
+        this.delta_y = -this.delta_y;
+    }
+
     collisionWith(sprite) {
+        if (this._collision_damping) {
+            return;
+        }
+
         var dx = this.delta_x;
         var dy = this.delta_y;
         this.delta_x = dy;
         this.delta_y = dx;
-        this.update();
-        console.log("COLLISION: " + this.constructor.name + " " + this.id + " with " + sprite.id + " at " + this.x + "," + this.y);
+        this._collision_damping = this.animator.collision_damping;
+        this.reportCollision(sprite);
     }
 
     //=========================================================

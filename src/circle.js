@@ -32,8 +32,8 @@ class Circle extends Sprite {
     draw() {
         var ctx = this.ctx;
 
-        ctx.fillStyle = "aqua";
-        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = "blue";
+        ctx.arc(this.x + this.radius, this.y + this.radius, this.radius, 0, 2 * Math.PI);
         ctx.fill();
     }
 }

@@ -7,7 +7,7 @@
     </head>
 
     <body>
-        <canvas id="mycanvas" width=640 height=480>
+        <canvas id="mycanvas" width=640 height=480 style="background-color: #f5f5c0;">
         </canvas>
     </body>
 
@@ -21,8 +21,12 @@
         circle.delta_x = 1;
         circle.delta_y = -1;
 
-        animator.add(box, circle);
-        animator.start(100);
+        var circle2 = new Spritez.Circle(100, 220, 30);
+        circle2.delta_x = 3;
+        circle2.delta_y = -1;
+
+        animator.add(box, circle, circle2);
+        animator.start();
     </script>
 
 </html>

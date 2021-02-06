@@ -21,8 +21,28 @@ class Animator {
         return 10;
     }
 
+    get collision_damping() {
+        return 27;
+    }
+
     get canvas() {
         return this._canvas;
+    }
+
+    get left_edge() {
+        return this._left_edge || 0;
+    }
+
+    get right_edge() {
+        return this._right_edge || this.canvas.width;
+    }
+
+    get top_edge() {
+        return this._top_edge || 0;
+    }
+
+    get bottom_edge() {
+        return this._bottom_edge || this.canvas.height;
     }
 
     get ctx() {
@@ -48,9 +68,18 @@ class Animator {
                     }
                 }
 
-                console.log("Adding " + sprite.constructor.name + " " + sprite.id);
                 self._sprites.push(sprite);
                 sprite.animator = self;
+            }
+        );
+
+        this.sortSprites();
+    }
+
+    sortSprites() {
+        this._sprites.sort(
+            function(a, b) {
+                return (a.sortorder || 0) - (b.sortorder || 0);
             }
         );
     }
@@ -125,6 +154,26 @@ class Animator {
     }
 
     detect_collisions() {
+        var sprites = this._sprites;
+
+        for (var i=0; i < sprites.length; ++i) {
+            var sprite = sprites[i];
+
+            if (sprite.x <= this.left_edge) {
+                sprite.collisionLeft();
+            }
+            else if (sprite.x + sprite.width >= this.right_edge) {
+                sprite.collisionRight();
+            }
+
+            if (sprite.y <= this.top_edge) {
+                sprite.collisionTop();
+            }
+            else if (sprite.y + sprite.height >= this.bottom_edge) {
+                sprite.collisionBottom();
+            }
+        }
+
         var pairs = this.collision_pairs;
 
         for (var i=0; i < pairs.length; ++i) {
