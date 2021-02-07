@@ -9,13 +9,17 @@ class Sprite {
     //                      Constructor
     //=========================================================
     constructor(x, y) {
-        this._animator = null;
-        this._id = this.constructor.getNextId();
+        // The coordinates are for the "center" of the sprite
         this._x = x || 0;
         this._y = y || 0;
+
+        // These describe the sprite's active vector
         this._delta_x = 0;
         this._delta_y = 0;
+
+        this._id = this.constructor.getNextId();
         this._collision_damping = 0;
+        this._animator = null;
         this._sortorder = 50;
     }
 
@@ -58,8 +62,24 @@ class Sprite {
         return this._y;
     }
 
+    get width() {
+        return this._width || 0;
+    }
+
+    get height() {
+        return this._height || 0;
+    }
+
+    get half_width() {
+        return this.width / 2;
+    }
+
+    get half_height() {
+        return this.height / 2;
+    }
+
     get delta_x() {
-        return this._delta_x || 0.0;
+        return this._delta_x;
     }
 
     set delta_x(rate) {
@@ -67,7 +87,7 @@ class Sprite {
     }
 
     get delta_y() {
-        return this._delta_y || 0.0;
+        return this._delta_y;
     }
 
     set delta_y(rate) {
@@ -82,39 +102,29 @@ class Sprite {
             --this._collision_damping;
         }
 
-        this._x += this._delta_x;
-        this._y += this._delta_y;
+        this._x += this.delta_x;
+        this._y += this.delta_y;
         this.draw();
     }
 
     //=========================================================
     //                 Collision Detection
     //=========================================================
+    // Default collision blocks is just the coordinates of a single boundingRect
     get collision_blocks() {
-        // FIXME: This is really just for Box
-        var blockdef = this.animator.detection_block;
-        var x_size = this.animator.block_width || 10;
-        var y_size = this.animator.block_height || 10;
-        var x = this.x;
-        var y = this.y;
+        var x = this.x - this.half_width;
+        var y = this.y - this.half_height;
         var width = this.width;
         var height = this.height;
-        var results = [];
 
-        for (var j=0; j < height; j += y_size) {
-            for (var i=0; i < width; i += x_size) {
-                var coords = [
-                    [i + x, j + y],
-                    [i + x + x_size, j + y],
-                    [i + x + x_size, j + y + y_size],
-                    [i + x + x_size, j + y + y_size]
-                ];
+        var boundingblock = [
+            [x, y],
+            [x + width, y],
+            [x, y + height],
+            [x + width, y + height],
+        ];
 
-                results.push(coords);
-            }
-        }
-
-        return results;
+        return [boundingblock];
     }
 
     reportCollision(other) {
@@ -138,43 +148,43 @@ class Sprite {
 
     collisionLeft() {
         this.reportCollision("left");
-        this.delta_x = -this.delta_x;
+        this.delta_x = Math.abs(this.delta_x);
     }
 
     collisionRight() {
         this.reportCollision("right");
-        this.delta_x = -this.delta_x;
+        this.delta_x = 0 - Math.abs(this.delta_x);
     }
 
     collisionTop() {
         this.reportCollision("top");
-        this.delta_y = -this.delta_y;
+        this.delta_y = Math.abs(this.delta_y);
     }
 
     collisionBottom() {
         this.reportCollision("bottom");
-        this.delta_y = -this.delta_y;
+        this.delta_y = 0 - Math.abs(this.delta_y);
     }
 
-    collisionWith(sprite) {
+    collisionWith(sprite, dx, dy) {
+        // Ignore new collisions if within damping period
         if (this._collision_damping) {
             return;
         }
 
-        var dx = this.delta_x;
-        var dy = this.delta_y;
-        this.delta_x = dy;
-        this.delta_y = dx;
+        // Default behaviour is to adopt the direction
+        // and velocity of the other sprite
+        this.delta_x = dx;
+        this.delta_y = dy;
         this._collision_damping = this.animator.collision_damping;
-        this.reportCollision(sprite);
+        this.reportCollision(sprite); // DEBUG
     }
 
     //=========================================================
     //                      Rendering
     //=========================================================
     draw() {
-        this.ctx.fillStyle = "#454500";
-        this.ctx.fillRect(100, 50, 200, 175);
+        throw new Error("Cannot use base class " + this.constructor.name + " as a sprite");
     }
 }
 

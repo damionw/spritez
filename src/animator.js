@@ -22,7 +22,7 @@ class Animator {
     }
 
     get collision_damping() {
-        return 27;
+        return 227;
     }
 
     get canvas() {
@@ -159,27 +159,27 @@ class Animator {
         for (var i=0; i < sprites.length; ++i) {
             var sprite = sprites[i];
 
-            if (sprite.x <= this.left_edge) {
+            if (sprite.x - (sprite.width / 2) <= this.left_edge) {
                 sprite.collisionLeft();
             }
-            else if (sprite.x + sprite.width >= this.right_edge) {
+            else if (sprite.x + (sprite.width / 2) >= this.right_edge) {
                 sprite.collisionRight();
             }
 
-            if (sprite.y <= this.top_edge) {
+            if (sprite.y - (sprite.height / 2) <= this.top_edge) {
                 sprite.collisionTop();
             }
-            else if (sprite.y + sprite.height >= this.bottom_edge) {
+            else if (sprite.y + (sprite.height / 2) >= this.bottom_edge) {
                 sprite.collisionBottom();
             }
         }
 
+        // FIXME: This should be a function
         var pairs = this.collision_pairs;
 
         for (var i=0; i < pairs.length; ++i) {
             var sprite1 = pairs[i][0];
             var sprite2 = pairs[i][1];
-
             var regions1 = sprite1.collision_blocks;
             var regions2 = sprite2.collision_blocks;
             var collision = false;
@@ -197,8 +197,12 @@ class Animator {
             }
 
             if (collision) {
-                sprite1.collisionWith(sprite2);
-                sprite2.collisionWith(sprite1);
+                var dx1= sprite1.delta_x;
+                var dy1 = sprite1.delta_y;
+                var dx2 = sprite2.delta_x;
+                var dy2 = sprite2.delta_y;
+                sprite1.collisionWith(sprite2, dx2, dy2);
+                sprite2.collisionWith(sprite1, dx1, dy1);
             }
         }
     }
