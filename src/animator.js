@@ -5,7 +5,8 @@ class Animator {
     constructor(canvas) {
         this._canvas = canvas;
         this._context = null;
-        this._sprites = [];
+        this._sprites = {}; // Keyed by sprite id
+        this._ordered_sprites = null;
         this._countdown = null;
         this._running = false;
     }
@@ -53,6 +54,20 @@ class Animator {
         return this._context;
     }
 
+    get sprites() {
+        if (this._ordered_sprites == null) {
+            this._ordered_sprites = Object.values(this._sprites);
+
+            this._ordered_sprites.sort(
+                function(a, b) {
+                    return (a.sortorder || 0) - (b.sortorder || 0);
+                }
+            );
+        }
+
+        return this._ordered_sprites;
+    }
+
     //=========================================================
     //                      Collections
     //=========================================================
@@ -61,27 +76,12 @@ class Animator {
 
         Array.from(arguments).forEach(
             function(sprite) {
-                for (var i=0; i < self._sprites.length; ++i) {
-                    if (self._sprites[i].id == sprite.id) {
-                        console.log(sprite.constructor.name + " == " + self._sprites[i].constructor.name);
-                        return;
-                    }
-                }
-
-                self._sprites.push(sprite);
+                self._sprites[sprite.id] = sprite;
                 sprite.animator = self;
             }
         );
 
-        this.sortSprites();
-    }
-
-    sortSprites() {
-        this._sprites.sort(
-            function(a, b) {
-                return (a.sortorder || 0) - (b.sortorder || 0);
-            }
-        );
+        this._ordered_sprites = null;
     }
 
     //=========================================================
@@ -118,7 +118,7 @@ class Animator {
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         ctx.beginPath();
 
-        this._sprites.forEach(
+        this.sprites.forEach(
             function(sprite) {
                 sprite.update();
             }
@@ -150,11 +150,11 @@ class Animator {
             }
         }
 
-        return Array.from(fetchCollisionPairs(this._sprites));
+        return Array.from(fetchCollisionPairs(this.sprites));
     }
 
     detect_collisions() {
-        var sprites = this._sprites;
+        var sprites = this.sprites;
 
         for (var i=0; i < sprites.length; ++i) {
             var sprite = sprites[i];
@@ -201,8 +201,11 @@ class Animator {
                 var dy1 = sprite1.delta_y;
                 var dx2 = sprite2.delta_x;
                 var dy2 = sprite2.delta_y;
-                sprite1.collisionWith(sprite2, dx2, dy2);
-                sprite2.collisionWith(sprite1, dx1, dy1);
+
+                if (! ((dx1 == dx2) || (dy1 == dy2))) {
+                    sprite1.collisionWith(sprite2, dx2, dy2);
+                    sprite2.collisionWith(sprite1, dx1, dy1);
+                }
             }
         }
     }

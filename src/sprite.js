@@ -176,7 +176,7 @@ class Sprite {
         // and velocity of the other sprite
         this.delta_x = dx;
         this.delta_y = dy;
-        this._collision_damping = this.animator.collision_damping;
+        this._collision_damping = 0; // this.animator.collision_damping;
         this.reportCollision(sprite); // DEBUG
     }
 
@@ -188,4 +188,4 @@ class Sprite {
     }
 }
 
-// (window.Spritez = window.Spritez || {})[Sprite.name] = Sprite;
+(window.Spritez = window.Spritez || {})[Sprite.name] = Sprite;
